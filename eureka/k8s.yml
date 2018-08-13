@@ -1,0 +1,141 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: axd-register
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: axd-register
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: axd-register
+  namespace: default
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: axd-register0
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: axd-register0
+    spec:
+      serviceAccount: axd-register
+      containers:
+      - name: axd-register
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 10001
+          protocol: TCP
+          name: eureka-port
+        volumeMounts:
+      imagePullSecrets:
+      - name: aliyun-vpc-registry
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: axd-register0
+  namespace: default
+spec:
+  ports:
+  - port: 10001
+    targetPort: 10001
+    name: eureka-port
+  selector:
+    k8s-app: axd-register0
+  type: LoadBalancer
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: axd-register1
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: axd-register1
+    spec:
+      serviceAccount: axd-register
+      containers:
+      - name: axd-register1
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 10001
+          protocol: TCP
+          name: eureka-port
+        volumeMounts:
+      imagePullSecrets:
+      - name: aliyun-vpc-registry
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: axd-register1
+  namespace: default
+spec:
+  ports:
+  - port: 10001
+    targetPort: 10001
+    name: eureka-port
+  selector:
+    k8s-app: axd-register1
+  type: ClusterIP
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: axd-register2
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: axd-register2
+    spec:
+      serviceAccount: axd-register
+      containers:
+      - name: axd-register2
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 10001
+          protocol: TCP
+          name: eureka-port
+        volumeMounts:
+      imagePullSecrets:
+      - name: aliyun-vpc-registry
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: axd-register2
+  namespace: default
+spec:
+  ports:
+  - port: 10001
+    targetPort: 10001
+    name: eureka-port
+  selector:
+    k8s-app: axd-register2
+  type: ClusterIP

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: apollo-portal
+  labels:
+    kube-svc: apollo-portal
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 8070
+    targetPort: 8070
+    protocol: TCP
+  selector:
+    kube-app: apollo-portal
+
+---
+# Source: ack-springcloud-turbine/templates/deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apollo-portal
+  labels:
+    kube-app: apollo-portal
+spec:
+  replicas:  1
+  revisionHistoryLimit: 
+  template:
+    metadata:
+      labels:
+        kube-app: apollo-portal
+    spec:
+      containers:
+      - name: apollo-portal
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/apollo-portal:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8070
+          protocol: TCP
