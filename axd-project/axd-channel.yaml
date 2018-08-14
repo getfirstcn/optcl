@@ -4,8 +4,8 @@ metadata:
   annotations:
   generation: 3
   labels:
-    k8s-app: axd-basic
-  name: axd-basic
+    k8s-app: axd-channel
+  name: axd-channel
   namespace: default
 spec:
   progressDeadlineSeconds: 600
@@ -13,7 +13,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      k8s-app: axd-basic
+      k8s-app: axd-channel
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -23,18 +23,18 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        k8s-app: axd-basic
+        k8s-app: axd-channel
     spec:
       containers:
       - command:
-        #- /usr/bin/tail
-        #- -f
-        #- /etc/resolv.conf
-        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-basic-provider:P003
+       # - /usr/bin/tail
+       # - -f
+       # - /etc/resolv.conf
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-channel-provider:P003
         imagePullPolicy: Always
-        name: axd-basic
+        name: axd-channel
         ports:
-        - containerPort: 1201
+        - containerPort: 1202
           name: http
           protocol: TCP
         resources:
@@ -59,13 +59,13 @@ metadata:
   annotations:
     service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
     service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
-  name: axd-basic-svc
+  name: axd-channel-svc
   namespace: default
 spec:
   ports:
-  - port: 1201
-    targetPort: 1201
+  - port: 1202
+    targetPort: 1202
     name: http
   selector:
-    k8s-app: axd-basic
+    k8s-app: axd-channel
   type: LoadBalancer

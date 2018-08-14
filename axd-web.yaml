@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: axd-web
+  labels:
+    kube-svc: axd-web
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    kube-app: axd-web
+
+---
+# Source: ack-springcloud-turbine/templates/deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: axd-web
+  labels:
+    kube-app: axd-web
+spec:
+  replicas:  1
+  revisionHistoryLimit: 
+  template:
+    metadata:
+      labels:
+        kube-app: axd-web
+    spec:
+      containers:
+      - name: axd-web
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: opt-dir
+      volumes:
+      - hostPath:
+          path: /opt
+          type: DirectoryOrCreate
+        name: opt-dir

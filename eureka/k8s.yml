@@ -47,6 +47,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
+    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
   name: axd-register0
   namespace: default
 spec:

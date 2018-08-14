@@ -3,7 +3,7 @@ kind: Service
 metadata: 
   annotations:
     service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
-    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9kc5oltjv1a7zbjitbp
+    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
   name: apollo-configservice
   labels:
     kube-svc: apollo-configservice

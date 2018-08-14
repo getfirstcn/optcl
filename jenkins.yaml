@@ -63,3 +63,21 @@ spec:
       #securityContext:
       #  privileged: true
       terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: jenkins-ci
+  name: jenkins-ci
+  namespace: default
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: jenkins-ci
+  sessionAffinity: None
+  type: LoadBalancer

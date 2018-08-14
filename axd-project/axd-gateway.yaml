@@ -1,0 +1,65 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: axd-gateway
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: axd-gateway
+    spec:
+      containers:
+      - name: axd-gateway
+        command:
+        #- /usr/bin/tail
+        #- -f
+        #- /etc/resolv.conf
+        # image: registry.cn-shenzhen.aliyuncs.com/axd/axd-gateway:latest
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-gateway-app:P003
+        imagePullPolicy: Always
+        # imagePullPolicy: IfNotPresent
+        # livenessProbe:
+        #   failureThreshold: 8
+        #   successThreshold: 1
+        #   periodSeconds: 5
+        #   httpGet:
+        #     host: 127.0.0.1
+        #     path: /healthz
+        #     port: 2001
+        #     scheme: HTTP
+        #   initialDelaySeconds: 15
+        #   timeoutSeconds: 15
+        resources:
+          # need more cpu upon initialization, therefore burstable class
+          limits:
+           # cpu: 1000m
+           # memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        ports:
+        - containerPort: 2001
+          name: http
+          protocol: TCP
+      imagePullSecrets:
+      - name: aliyun-vpc-registry
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
+    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
+  name: axd-gateway
+  namespace: default
+spec:
+  ports:
+  - port: 2001
+    targetPort: 2001
+    name: http
+  selector:
+    k8s-app: axd-gateway
+  type: LoadBalancer
