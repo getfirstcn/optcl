@@ -1,0 +1,4 @@
+from jenkinsci/jnlp-slave:alpine
+user root
+run apk update \
+    && apk add maven nodejs

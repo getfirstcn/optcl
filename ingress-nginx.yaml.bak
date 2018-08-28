@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"nginx-ingress-lb"},"name":"nginx-ingress-lb","namespace":"kube-system"},"spec":{"externalTrafficPolicy":"Local","ports":[{"name":"http","port":80,"targetPort":80},{"name":"https","port":443,"targetPort":443}],"selector":{"app":"ingress-nginx"},"type":"LoadBalancer"}}
+    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
+    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
+  creationTimestamp: 2018-08-13T10:35:07Z
+  labels:
+    app: nginx-ingress-lb
+  name: nginx-ingress-lb
+  namespace: kube-system
+  resourceVersion: "734308"
+  selfLink: /api/v1/namespaces/kube-system/services/nginx-ingress-lb
+  uid: 8c102727-9ee4-11e8-a9d0-00163e0c4f65
+spec:
+  clusterIP: 172.26.4.218
+  externalTrafficPolicy: Local
+  healthCheckNodePort: 30051
+  ports:
+  - name: http
+    nodePort: 30382
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    nodePort: 30949
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app: ingress-nginx
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 47.107.216.66

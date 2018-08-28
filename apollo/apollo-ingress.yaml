@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apollo-configservice-ingress
+  namespace: apollo
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: apollo.aixiangdao.tech
+    http:
+      paths:
+      - backend:
+          serviceName: apollo-configservice
+          servicePort: 8080

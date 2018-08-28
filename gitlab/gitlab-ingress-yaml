@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gitlab-ingress
+  namespace: kube-system
+  annotations:
+    traefik.ingress.kubernetes.io/preserve-host: "true"
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: git.aixiangdao.tech
+    http:
+      paths:
+      - backend:
+          serviceName: gitlab-ci 
+          servicePort: 80

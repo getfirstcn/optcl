@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apollo-portal-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: portal.apollo.aixiangdao.tech
+    http:
+      paths:
+      - backend:
+          serviceName: apollo-portal
+          servicePort: 8070

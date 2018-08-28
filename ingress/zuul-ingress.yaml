@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: axd-gateway-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: api.aixiangdao.tech
+    http:
+      paths:
+      - path: /p003
+        backend:
+          serviceName: axd-gateway 
+          servicePort: 2001

@@ -39,6 +39,7 @@ spec:
     spec:
       containers:
       - name: apollo-adminservice
+        command: 
         image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/apollo-adminservice:1.0.0
         imagePullPolicy: Always
         ports:

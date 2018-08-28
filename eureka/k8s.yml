@@ -18,6 +18,62 @@ subjects:
   namespace: default
 
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: axd-register-config
+  namespace: default
+data:
+  application.yaml: |
+    spring:
+      application:
+        name: spring-cloud-eureka
+      profiles: axd-register0
+    server:
+      port: 10001
+      enableSelfPreservation: true
+    eureka:
+      instance:
+        hostname: axd-register0
+      client:
+        serviceUrl:
+          defaultZone: http://axd-register1:10001/eureka/,http://axd-register2:10001/eureka/
+        fetch-registry: true
+        register-with-eureka: true
+    ---
+    spring:
+      application:
+        name: spring-cloud-eureka
+      profiles: axd-register1
+    server:
+      port: 10001
+      enableSelfPreservation: true
+    eureka:
+      instance:
+        hostname: axd-register1
+      client:
+        serviceUrl:
+          defaultZone: http://axd-register0:10001/eureka/,http://axd-register2:10001/eureka/
+        fetch-registry: true
+        register-with-eureka: true
+    ---
+    spring:
+      application:
+        name: spring-cloud-eureka
+      profiles: axd-register2
+    server:
+      port: 10001
+      enableSelfPreservation: true
+    eureka:
+      instance:
+        hostname: axd-register2
+      client:
+        serviceUrl:
+          defaultZone: http://axd-register0:10001/eureka/,http://axd-register1:10001/eureka/
+        fetch-registry: true
+        register-with-eureka: true
+
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -35,21 +91,31 @@ spec:
       - name: axd-register
         image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
         imagePullPolicy: Always
+        command:
+        - tail
+        - -f
+        - /dev/null
         ports:
         - containerPort: 10001
           protocol: TCP
           name: eureka-port
         volumeMounts:
+        - mountPath: /opt/config
+          name: axd-register-config
       imagePullSecrets:
       - name: aliyun-vpc-registry
+      volumes:
+      - name: axd-register-config
+        configMap:
+          name: axd-register-config
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
-    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
+    # service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
+    # service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
   name: axd-register0
   namespace: default
 spec:
@@ -59,7 +125,7 @@ spec:
     name: eureka-port
   selector:
     k8s-app: axd-register0
-  type: LoadBalancer
+  type: ClusterIP
 
 ---
 apiVersion: extensions/v1beta1
@@ -79,13 +145,23 @@ spec:
       - name: axd-register1
         image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
         imagePullPolicy: Always
+        command:
+        - tail
+        - -f
+        - /dev/null
         ports:
         - containerPort: 10001
           protocol: TCP
           name: eureka-port
         volumeMounts:
+        - mountPath: /opt/config
+          name: axd-register-config
       imagePullSecrets:
       - name: aliyun-vpc-registry
+      volumes:
+      - name: axd-register-config
+        configMap:
+          name: axd-register-config
 
 ---
 apiVersion: v1
@@ -120,13 +196,23 @@ spec:
       - name: axd-register2
         image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
         imagePullPolicy: Always
+        command:
+        - tail
+        - -f
+        - /dev/null
         ports:
         - containerPort: 10001
           protocol: TCP
           name: eureka-port
         volumeMounts:
+        - mountPath: /opt/config
+          name: axd-register-config
       imagePullSecrets:
       - name: aliyun-vpc-registry
+      volumes:
+      - name: axd-register-config
+        configMap:
+          name: axd-register-config
 
 ---
 apiVersion: v1
