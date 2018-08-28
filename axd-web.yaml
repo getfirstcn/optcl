@@ -15,7 +15,6 @@ spec:
     kube-app: axd-web
 
 ---
-# Source: ack-springcloud-turbine/templates/deployment.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -43,6 +42,29 @@ spec:
           name: opt-dir
       volumes:
       - hostPath:
-          path: /opt
+          path: /opt/html
           type: DirectoryOrCreate
         name: opt-dir
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.rule.type: PathPrefixStrip
+    traefik.ingress.kubernetes.io/preserve-host: "true"
+  name: axd-web-ingress
+spec:
+  rules:
+  - host: api.aixiangdao.tech
+    http:
+      paths:
+      - backend:
+          serviceName: axd-web
+          servicePort: 80
+        path: /web
+      - backend:
+          serviceName: axd-web
+          servicePort: 8070
+        path: /w3c

@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: spring-cloud-eureka
+  profiles: axd-register0
+server:
+  port: 10001
+  enableSelfPreservation: false
+eureka:
+  instance:
+    hostname: axd-register0
+  client:
+    serviceUrl:
+      defaultZone: 'http://axd-register1:10001/eureka/,http://axd-register2:10001/eureka/'
+    fetch-registry: true
+    register-with-eureka: true
+---
+spring:
+  application:
+    name: spring-cloud-eureka
+  profiles: axd-register1
+server:
+  port: 10001
+  enableSelfPreservation: false
+eureka:
+  instance:
+    hostname: axd-register1
+  client:
+    serviceUrl:
+      defaultZone: 'http://axd-register0:10001/eureka/,http://axd-register2:10001/eureka/'
+    fetch-registry: true
+    register-with-eureka: true
+---
+spring:
+  application:
+    name: spring-cloud-eureka
+  profiles: axd-register2
+server:
+  port: 10001
+  enableSelfPreservation: false
+eureka:
+  instance:
+    hostname: axd-register2
+  client:
+    serviceUrl:
+      defaultZone: 'http://axd-register0:10001/eureka/,http://axd-register1:10001/eureka/'
+    fetch-registry: true
+    register-with-eureka: true
