@@ -21,9 +21,16 @@ spec:
       hostNetwork: true
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
+      volumes:
+      - name: config
+        configMap:
+          name: traefik-conf
       containers:
       - image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/traefik:latest
         name: traefik-ingress-lb
+        volumeMounts:
+        - mountPath: /config
+          name: config
         #ports:
         #- name: http
         #  containerPort: 80
@@ -41,6 +48,7 @@ spec:
         - --api
         - --kubernetes
         - --logLevel=INFO
+        - --configfile=/config/traefik.toml
 ---
 kind: Service
 apiVersion: v1
@@ -57,4 +65,7 @@ spec:
     - protocol: TCP
       port: 8080
       name: admin
+    - protocol: TCP
+      port: 443
+      name: ssl
 

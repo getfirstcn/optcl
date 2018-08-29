@@ -25,7 +25,7 @@ spec:
       # hostNetwork: true
       nodeName: cn-shenzhen.i-wz9a4y34brd0z50qraxx
       containers:
-      - image: jenkinsci/blueocean
+      - image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/jenkinsci-blueocean:alpine
         imagePullPolicy: Always
         name: jenkins-ci
         volumeMounts:
@@ -43,10 +43,15 @@ spec:
         ports:
         - containerPort: 8080
           protocol: TCP
+<<<<<<< HEAD
           name: admin
         - containerPort: 50000
           protocol: TCP
           name: jnlp
+=======
+        - containerPort: 50000
+          protocol: TCP
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
@@ -99,3 +104,76 @@ spec:
     app: jenkins-ci
   sessionAffinity: None
   type: LoadBalancer
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: jenkins-slave
+  name: jenkins-slave
+  namespace: default
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: jenkins-slave
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: jenkins-slave
+    spec:
+      # hostNetwork: true
+      # nodeName: cn-shenzhen.i-wz9a4y34brd0z50qraxx
+      containers:
+      - image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/jenkins-jnlp-slave:alpine
+        imagePullPolicy: Always
+        name: jenkins-slave
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: docker-sock
+        - name: cluster-admin
+          mountPath: /root/.kube
+        - name: kubectl
+          mountPath: /usr/local/bin/kubectl
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 50000
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      volumes:
+      - hostPath:
+          path: /var/run/docker.sock
+          type: Socket
+        name: docker-sock
+      - name: cluster-admin
+        configMap:
+        # kubectl create configmap cluster-admin --from-file=/root/.kube/config
+          name: cluster-admin
+      - name: kubectl
+        hostPath:
+          path: /usr/bin/kubectl
+          type: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      #securityContext:
+      #  privileged: true
+
+
+
+
+

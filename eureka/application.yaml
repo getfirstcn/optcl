@@ -10,7 +10,11 @@ eureka:
     hostname: axd-register0
   client:
     serviceUrl:
+<<<<<<< HEAD
       defaultZone: http://axd-register1:10001/eureka/,http://axd-register2:10001/eureka/
+=======
+      defaultZone: 'http://axd-register1:10001/eureka/,http://axd-register2:10001/eureka/'
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
     fetch-registry: true
     register-with-eureka: true
 ---
@@ -26,7 +30,11 @@ eureka:
     hostname: axd-register1
   client:
     serviceUrl:
+<<<<<<< HEAD
       defaultZone: http://axd-register0:10001/eureka/,http://axd-register2:10001/eureka/
+=======
+      defaultZone: 'http://axd-register0:10001/eureka/,http://axd-register2:10001/eureka/'
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
     fetch-registry: true
     register-with-eureka: true
 ---
@@ -42,6 +50,12 @@ eureka:
     hostname: axd-register2
   client:
     serviceUrl:
+<<<<<<< HEAD
       defaultZone: http://axd-register0:10001/eureka/,http://axd-register1:10001/eureka/
     fetch-registry: true
     register-with-eureka: true
+=======
+      defaultZone: 'http://axd-register0:10001/eureka/,http://axd-register1:10001/eureka/'
+    fetch-registry: true
+    register-with-eureka: true
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
