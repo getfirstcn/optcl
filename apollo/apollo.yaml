@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  annotations:
+    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: internet
+    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-wz9m85xp1i3fae0u2oxvl
+  name: apollo-configservice
+  labels:
+    kube-svc: apollo-configservice
+spec:
+  type: LoadBalancer
+  ports:
+  - name: admin
+    port: 8090
+    targetPort: 8090
+    protocol: TCP
+  - name: config
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    kube-app: apollo
+
+---
+# Source: ack-springcloud-turbine/templates/deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apollo
+  labels:
+    kube-app: apollo
+spec:
+  replicas:  1
+  revisionHistoryLimit: 
+  template:
+    metadata:
+      labels:
+        kube-app: apollo
+    spec:
+      containers:
+      - name: apollo-adminservice
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/apollo-adminservice:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - name: admin
+          containerPort: 8080
+          protocol: TCP
+      - name: apollo-configservice
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/apollo-configservice:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - name: config
+          containerPort: 8080
+          protocol: TCP
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apollo-configservice-ingress
+  namespace: apollo
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    treafik.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: apollo.aixiangdao.tech
+    http:
+      paths:
+      - backend:
+          serviceName: apollo-configservice
+          servicePort: 8080
