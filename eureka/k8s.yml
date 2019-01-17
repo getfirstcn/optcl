@@ -31,7 +31,11 @@ data:
       profiles: axd-register0
     server:
       port: 10001
+<<<<<<< HEAD
+      enableSelfPreservation: true
+=======
       enableSelfPreservation: false
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
     eureka:
       instance:
         hostname: axd-register0
@@ -47,7 +51,11 @@ data:
       profiles: axd-register1
     server:
       port: 10001
+<<<<<<< HEAD
+      enableSelfPreservation: true
+=======
       enableSelfPreservation: false
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
     eureka:
       instance:
         hostname: axd-register1
@@ -63,7 +71,11 @@ data:
       profiles: axd-register2
     server:
       port: 10001
+<<<<<<< HEAD
+      enableSelfPreservation: true
+=======
       enableSelfPreservation: false
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
     eureka:
       instance:
         hostname: axd-register2
@@ -92,6 +104,11 @@ spec:
         image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
         imagePullPolicy: Always
         command:
+<<<<<<< HEAD
+        - tail
+        - -f
+        - /dev/null
+=======
         - java
         - -server
         - -Xms512m
@@ -102,13 +119,20 @@ spec:
         - -jar
         - /opt/axd-register-1.0-SNAPSHOT.jar
         - --spring.profiles.active=axd-register0
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
         ports:
         - containerPort: 10001
           protocol: TCP
           name: eureka-port
         volumeMounts:
+        - mountPath: /opt/config
+          name: axd-register-config
       imagePullSecrets:
       - name: aliyun-vpc-registry
+      volumes:
+      - name: axd-register-config
+        configMap:
+          name: axd-register-config
 
 ---
 apiVersion: v1
@@ -147,6 +171,11 @@ spec:
         image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
         imagePullPolicy: Always
         command:
+<<<<<<< HEAD
+        - tail
+        - -f
+        - /dev/null
+=======
         - java
         - -server
         - -Xms512m
@@ -157,13 +186,20 @@ spec:
         - -jar
         - /opt/axd-register-1.0-SNAPSHOT.jar
         - --spring.profiles.active=axd-register1
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
         ports:
         - containerPort: 10001
           protocol: TCP
           name: eureka-port
         volumeMounts:
+        - mountPath: /opt/config
+          name: axd-register-config
       imagePullSecrets:
       - name: aliyun-vpc-registry
+      volumes:
+      - name: axd-register-config
+        configMap:
+          name: axd-register-config
 
 ---
 apiVersion: v1
@@ -199,6 +235,11 @@ spec:
         image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/axd-register:latest
         imagePullPolicy: Always
         command:
+<<<<<<< HEAD
+        - tail
+        - -f
+        - /dev/null
+=======
         - java
         - -server
         - -Xms512m
@@ -209,6 +250,7 @@ spec:
         - -jar
         - /opt/axd-register-1.0-SNAPSHOT.jar
         - --spring.profiles.active=axd-register2
+>>>>>>> 2e813ddcca31beebdb95c4db4d28f1e7f855db63
         ports:
         - containerPort: 10001
           protocol: TCP

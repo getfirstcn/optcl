@@ -1,0 +1,101 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    app: gitlab-ci
+  name: gitlab-ci
+  namespace: kube-system
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: gitlab-ci
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: gitlab-ci
+    spec:
+      #hostNetwork: true
+      nodeName: cn-shenzhen.i-wz9a4y34brd0z50qraxx
+      containers:
+      - image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/gitlab-ce:latest
+        imagePullPolicy: IfNotPresent
+        name: gitlab-ci
+        volumeMounts:
+        - mountPath: /etc/gitlab
+          name: gitlab-config
+        - mountPath: /var/log/gitlab
+          name: gitlab-logs
+        - mountPath: /var/opt/gitlab
+          name: gitlab-data
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        ports:
+        - containerPort: 80
+          protocol: TCP
+          name: http
+        - containerPort: 22
+          name: ssh
+          protocol: TCP
+        - containerPort: 443
+          protocol: TCP
+          name: https
+        resources: {}
+      volumes:
+      - hostPath:
+          path: /home/gitlab/config
+          type: DirectoryOrCreate
+        name: gitlab-config
+      - hostPath:
+          path: /home/gitlab/logs
+          type: DirectoryOrCreate
+        name: gitlab-logs
+      - hostPath:
+          path: /home/gitlab/data
+          type: DirectoryOrCreate
+        name: gitlab-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      #securityContext:
+      #  privileged: true
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gitlab-ci
+  name: gitlab-ci
+  namespace: kube-system
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: http
+  - port: 22
+    protocol: TCP
+    targetPort: 22
+    name: ssh
+  - port: 443
+    protocol: TCP
+    targetPort: 443
+    name: https
+  selector:
+    app: gitlab-ci
+  sessionAffinity: None
+  type: NodePort

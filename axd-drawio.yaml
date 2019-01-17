@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: axd-drawio
+  labels:
+    kube-svc: axd-drawio
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: https
+    port: 8443
+    targetPort: 8443
+    protocol: TCP
+  selector:
+    kube-app: axd-drawio
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: axd-drawio
+  labels:
+    kube-app: axd-drawio
+spec:
+  replicas:  1
+  template:
+    metadata:
+      labels:
+        kube-app: axd-drawio
+    spec:
+      containers:
+      - name: axd-drawio
+        image: registry-vpc.cn-shenzhen.aliyuncs.com/axd/drawio:v9.0.6 
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: https
+          containerPort: 8443
+          protocol: TCP
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    traefik.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.rule.type: PathPrefixStrip
+    traefik.ingress.kubernetes.io/preserve-host: "true"
+  name: axd-drawio-ingress
+spec:
+  rules:
+  - host: draw.aixiangdao.tech
+    http:
+      paths:
+      - backend:
+          serviceName: axd-drawio
+          servicePort: 8080
